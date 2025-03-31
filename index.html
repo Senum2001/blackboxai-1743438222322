@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .bg-octave-green {
+            background-color: #96FFE6;
+        }
+        .text-octave-pink {
+            color: #F910B2;
+        }
+        .border-octave-pink {
+            border-color: #F910B2;
+        }
+        .hover\:bg-octave-pink-dark:hover {
+            background-color: #d40e9a;
+        }
+    </style>
+</head>
+<body class="bg-white min-h-screen flex flex-col">
+    <header class="bg-[#96FFE6] py-6 shadow-md">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="https://www.octave.lk/wp-content/uploads/2023/11/logo.png" alt="OCTAVE Logo" class="h-10 mr-4">
+                <h1 class="text-3xl font-bold text-[#F910B2]">
+                    Drift Detection Tool
+                </h1>
+            </div>
+            <nav>
+                <a href="index.html" class="text-[#F910B2] hover:text-[#d40e9a]">
+                    <i class="fas fa-home"></i> Home
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
+            <h2 class="text-2xl font-semibold text-pink mb-6 text-center">Select Your Options</h2>
+            
+            <form id="dashboardForm" class="space-y-4">
+                <div>
+                    <label for="businessUnit" class="block text-sm font-medium text-gray-700">Business Unit</label>
+                    <select id="businessUnit" name="businessUnit" class="mt-1 block w-full border-[#F910B2] rounded-md shadow-sm py-2 px-3 border focus:outline-none focus:ring-[#F910B2] focus:border-[#F910B2]">
+                        <option value="">Select Business Unit</option>
+                        <option value="CCS">CCS</option>
+                        <option value="JMSL">JMSL</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="useCase" class="block text-sm font-medium text-gray-700">Use Case</label>
+                    <select id="useCase" name="useCase" class="mt-1 block w-full border-[#F910B2] rounded-md shadow-sm py-2 px-3 border focus:outline-none focus:ring-[#F910B2] focus:border-[#F910B2]" disabled>
+                        <option value="">Select Business Unit first</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="shortCode" class="block text-sm font-medium text-gray-700">Use Case Short Code</label>
+                    <input type="text" id="shortCode" name="shortCode" class="mt-1 block w-full border-[#F910B2] rounded-md shadow-sm py-2 px-3 border focus:outline-none focus:ring-[#F910B2] focus:border-[#F910B2]" placeholder="e.g. CS-DE">
+                </div>
+
+                <div>
+                    <label for="mode" class="block text-sm font-medium text-gray-700">Mode</label>
+                    <select id="mode" name="mode" class="mt-1 block w-full border-[#F910B2] rounded-md shadow-sm py-2 px-3 border focus:outline-none focus:ring-[#F910B2] focus:border-[#F910B2]">
+                        <option value="mode1.html">OCTAVE RG</option>
+                        <option value="mode2.html">Other RG</option>
+                        <option value="mode3.html">OCTAVE CL</option>
+                        <option value="mode4.html">Other CL</option>
+                    </select>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="w-full bg-[#96FFE6] hover:bg-[#85e6d9] text-[#F910B2] font-bold py-2 px-4 rounded-md transition duration-300 flex items-center justify-center">
+                        <i class="fas fa-tv mr-2"></i> Monitor Dashboard
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="bg-pink py-4 text-white text-center">
+        <div class="container mx-auto px-4">
+            <p>&copy; 2023 OCTAVE Drift Detection Tool. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('dashboardForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const businessUnit = document.getElementById('businessUnit').value;
+            const useCase = document.getElementById('useCase').value;
+            const shortCode = document.getElementById('shortCode').value;
+            const mode = document.getElementById('mode').value;
+            
+            if (!businessUnit || !useCase || !shortCode || !mode) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            // Generate short code if empty
+            const finalShortCode = shortCode || `${businessUnit.substring(0,2)}-${useCase.substring(0,2)}`;
+            
+            // Store selections in localStorage for all pages
+            localStorage.setItem('businessUnit', businessUnit);
+            localStorage.setItem('useCase', useCase);
+            localStorage.setItem('shortCode', finalShortCode);
+            localStorage.setItem('selectedMode', mode);
+            
+            // Redirect to selected mode with parameters
+            window.location.href = mode;
+        });
+
+        // Auto-generate short code when business unit and use case are selected
+        // Business unit change handler
+        document.getElementById('businessUnit').addEventListener('change', function() {
+            const businessUnit = this.value;
+            const useCaseSelect = document.getElementById('useCase');
+            
+            // Clear and enable use case dropdown
+            useCaseSelect.innerHTML = '<option value="">Select Use Case</option>';
+            useCaseSelect.disabled = !businessUnit;
+            
+            // Populate based on selected business unit
+            if (businessUnit === 'CCS') {
+                useCaseSelect.innerHTML += `
+                    <option value="Distribution Efficiency">Distribution Efficiency</option>
+                    <option value="MT Promo">MT Promo</option>
+                `;
+            } else if (businessUnit === 'JMSL') {
+                useCaseSelect.innerHTML += `
+                    <option value="Customer Churn">Customer Churn</option>
+                `;
+            }
+            
+            updateShortCode();
+        });
+
+        document.getElementById('useCase').addEventListener('change', updateShortCode);
+        
+        function updateShortCode() {
+            const businessUnit = document.getElementById('businessUnit').value;
+            const useCase = document.getElementById('useCase').value;
+            
+            if (businessUnit && useCase) {
+                document.getElementById('shortCode').value = 
+                    `${businessUnit.substring(0,2)}-${useCase.substring(0,2)}`;
+            }
+        }
+    </script>
+</body>
+</html>
